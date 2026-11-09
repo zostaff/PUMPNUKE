@@ -1,188 +1,213 @@
-<p align="center">
-  <img src="assets/banner.svg" alt="PUMPNUKE" width="100%">
-</p>
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/node-22%2B-3ddc84?style=for-the-badge&logo=node.js&logoColor=white&labelColor=0a0e12" alt="Node 22+">
-  <img src="https://img.shields.io/badge/solana-web3.js-9945FF?style=for-the-badge&logo=solana&logoColor=white&labelColor=0a0e12" alt="Solana">
-  <img src="https://img.shields.io/badge/pump.fun-sdk-3ddc84?style=for-the-badge&labelColor=0a0e12" alt="pump.fun SDK">
-  <img src="https://img.shields.io/badge/ESM-only-ffb020?style=for-the-badge&labelColor=0a0e12" alt="ESM">
-  <img src="https://img.shields.io/badge/license-MIT-4b8bff?style=for-the-badge&labelColor=0a0e12" alt="MIT">
-</p>
+```text
+                         |\
+                         | \
+              .  ~=~=~=~ |  \______________________________________________
+           .  ~=~=~=~=~=~|==/:::::::::::::::::::::|                        \
+         ~=~=~=~=~=~=~=~=|=|::::::::::::::::::::::|          \ | /          |
+       <~=~=~=~=~=~=~=~=~|=|:::::  P U M P  ::::::|        --( O )--        |
+         ~=~=~=~=~=~=~=~=|=|::::::::::::::::::::::|          / | \          |
+           '  ~=~=~=~=~=~|==\:::::::::::::::::::::|                        /
+              '  ~=~=~=~ |  /----------------------------------------------
+                         | /
+                         |/
+```
 
-<h3 align="center">Wallet-pool volume engine for pump.fun — CLI + live dashboard + paper mode</h3>
+```text
+██████╗ ██╗   ██╗███╗   ███╗██████╗ ███╗   ██╗██╗   ██╗██╗  ██╗███████╗
+██╔══██╗██║   ██║████╗ ████║██╔══██╗████╗  ██║██║   ██║██║ ██╔╝██╔════╝
+██████╔╝██║   ██║██╔████╔██║██████╔╝██╔██╗ ██║██║   ██║█████╔╝ █████╗
+██╔═══╝ ██║   ██║██║╚██╔╝██║██╔═══╝ ██║╚██╗██║██║   ██║██╔═██╗ ██╔══╝
+██║     ╚██████╔╝██║ ╚═╝ ██║██║     ██║ ╚████║╚██████╔╝██║  ██╗███████╗
+╚═╝      ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+```
 
-<p align="center">
-  <a href="#-quick-start"><b>Quick Start</b></a> ·
-  <a href="#-how-it-works"><b>How It Works</b></a> ·
-  <a href="#-strategies"><b>Strategies</b></a> ·
-  <a href="#-cli"><b>CLI</b></a> ·
-  <a href="#-dashboard"><b>Dashboard</b></a> ·
-  <a href="#-configuration"><b>Config</b></a> ·
-  <a href="#-under-the-hood"><b>Internals</b></a> ·
-  <a href="#-faq"><b>FAQ</b></a>
-</p>
+```text
+┌────────────────────────────────────────────────────────────────────────────────┐
+│   >> VOLUME ENGINE FOR PUMP.FUN  //  WALLET POOL  //  CLI + LIVE DASHBOARD <<  │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+![node](https://img.shields.io/badge/node-22%2B-3ddc84?style=flat-square&labelColor=0a0e12)
+![solana](https://img.shields.io/badge/solana-web3.js-9945FF?style=flat-square&labelColor=0a0e12)
+![pump.fun](https://img.shields.io/badge/pump.fun-sdk-3ddc84?style=flat-square&labelColor=0a0e12)
+![esm](https://img.shields.io/badge/ESM-only-ffb020?style=flat-square&labelColor=0a0e12)
 
-## ☢ Overview
+**[ quick start ](#01--quick-start)** · **[ flow ](#02--how-it-works)** · **[ strategies ](#03--strategies)** · **[ cli ](#04--cli)** · **[ dashboard ](#05--dashboard)** · **[ config ](#06--configuration)** · **[ internals ](#07--under-the-hood)** · **[ faq ](#08--faq)**
 
-PUMPNUKE spins up a pool of fresh Solana wallets, funds them from a master wallet, and runs continuous buy/sell cycles on a pump.fun token with rotating wallets, randomized sizes and strategy-driven timing. When the run ends — or you hit `Ctrl+C` — it sells every remaining token and drains all SOL back to the master wallet.
+</div>
 
-Everything can run in **paper mode** first: same engine, same logs, zero transactions.
+```text
+┌────────────────────────────────────┬────────────────────────────────────┐
+│ [x2] STRATEGIES                    │ [@@] WALLET POOL                   │
+│      basic · staggered timing      │      generate · fund · drain       │
+├────────────────────────────────────┼────────────────────────────────────┤
+│ [<>] LRU ROTATION                  │ [%%] PARTIAL SELLS                 │
+│      never same wallet twice       │      40-70% of holdings            │
+├────────────────────────────────────┼────────────────────────────────────┤
+│ [!!] PANIC SELL                    │ [##] LIVE DASHBOARD                │
+│      dump all + drain, 1 cmd       │      dark UI, refresh 3s           │
+├────────────────────────────────────┼────────────────────────────────────┤
+│ [~~] CURVE + PUMPSWAP              │ [XX] AUTO STOP                     │
+│      venue auto-detect             │      5 errors in a row = halt      │
+└────────────────────────────────────┴────────────────────────────────────┘
+```
 
-<p align="center">
-  <img src="assets/terminal.svg" alt="PUMPNUKE terminal output" width="90%">
-</p>
+PUMPNUKE spins up a pool of fresh Solana wallets, funds them from your master wallet and runs continuous buy/sell cycles on a pump.fun token — rotating wallets, randomized sizes, strategy-driven timing. When the run ends or you hit `Ctrl+C`, it sells every remaining token and drains all SOL back to master.
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+```text
+$ node cli/nuke.mjs --mint DYdf...pump --budget 0.5 --wallets 8 --strategy staggered
 
-## ⚡ Features
+  P U M P N U K E  ·  LIVE  ·  8 wallets  ·  0.5 SOL  ·  15 min
+  Proceed? (y/n) y
 
-<p align="center">
-  <img src="assets/features.svg" alt="Features" width="100%">
-</p>
+10:47:40.489 [JOB]   job ecc2434de1a8 started — Ctrl+C to stop gracefully
+10:47:40.592 [FUND]  C2K4..DkrT 0.0719 SOL  sig=3kPq9wZx..
+10:47:41.104 [FUND]  AorA..W8Ar 0.0719 SOL  sig=5mTr2vLb..
+10:47:44.407 [BUY]   Ae8m..exZV 0.0270 SOL (initial)
+10:47:48.118 [SELL]  C2K4..DkrT 41% tokens
+10:47:51.723 [BUY]   Cx9M..AVbP 0.0134 SOL
+10:47:55.025 [SELL]  AorA..W8Ar 63% tokens
+10:47:58.327 [BUY]   C2K4..DkrT 0.0118 SOL
+   ...
+11:02:41.796 [DRAIN] Cx9M..AVbP 0.0581 SOL  sig=2zHn7cQe..
+11:02:42.901 [JOB]   done — 214 buys, 141 sells, 0.9861 SOL spent
+```
 
-<table>
-<tr>
-<td width="50%" valign="top">
+---
 
-### Engine
-- Three-phase lifecycle: **fund → initial buy → cycling**
-- LRU wallet rotation, never the same wallet twice in a row
-- Buy bias control (default 60% buys)
-- Partial sells: 40–70% of holdings per sell
-- Bonding curve **and** PumpSwap AMM detection
-- `BigInt` math everywhere, SOL handled in lamports
+<a id="01--quick-start"></a>
 
-</td>
-<td width="50%" valign="top">
-
-### Safety
-- **Paper mode** on by default (`DRY_RUN=true`)
-- Preview + confirmation before every run
-- Auto-stop after **5 consecutive errors**
-- `Ctrl+C` handler: stop → sell all → drain → session stats
-- One-command **panic sell** and **drain**
-- Every job persisted to `data/jobs/*.json`
-
-</td>
-</tr>
-</table>
-
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
-
-## 🚀 Quick Start
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [01]  QUICK START                                                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
 
 ```bash
-git clone https://github.com/zostaff/PUMPNUKE.git
-cd PUMPNUKE
+git clone https://github.com/zostaff/PUMPNUKE.git && cd PUMPNUKE
 npm install
 cp .env.example .env
 ```
 
-Fill in `.env`:
-
 ```env
 RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
 WALLET_PRIVATE_KEY=your_base58_private_key
-DRY_RUN=true
+DRY_RUN=false
 ```
-
-Run a paper simulation:
 
 ```bash
 node cli/nuke.mjs --mint <TOKEN_CA> --budget 0.5 --wallets 8 --strategy staggered
+node dashboard/server.mjs        # -> http://localhost:3002
 ```
 
-Go live once the simulation looks right:
+---
 
-```bash
-# .env → DRY_RUN=false
-node cli/nuke.mjs --mint <TOKEN_CA> --budget 0.5 --wallets 8 --strategy staggered
-```
-
-Open the dashboard:
-
-```bash
-node dashboard/server.mjs   # → http://localhost:3002
-```
-
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
-
-## 🔁 How It Works
-
-<p align="center">
-  <img src="assets/flow.svg" alt="Flow" width="100%">
-</p>
-
-| Phase | What happens | Details |
-|:---:|---|---|
-| **1 · Fund** | Master sends SOL to each pool wallet | Equal split of budget, 500 ms between transfers |
-| **2 · Initial buy** | Every wallet opens a position | 30–50% of wallet balance, timing set by strategy |
-| **3 · Cycling** | Rotating buy/sell loop until duration ends | Buy ~30% of SOL or sell 40–70% of tokens |
-| **4 · Cleanup** | Exit everything | `sellAll` on holders → `drainWallets` to master |
-
-<details>
-<summary><b>Cycle decision logic</b></summary>
+<a id="02--how-it-works"></a>
 
 ```text
-loop until (now >= endTime) or job.stopping:
-    pool    = wallets except previous
-    pool    = sort by lastUsedAt ascending
-    pick    = random of first 3 in pool
-    isBuy   = !pick.hasTokens  or  random() < buyBias
-    if isBuy:  buy  30% of (balance − fee reserve)
-    else:      sell 40–70% of token balance
-    on error:  consecutiveErrors++ → stop at 5
-    sleep(strategy.cycleDelay())
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [02]  HOW IT WORKS                                                        ║
+╚════════════════════════════════════════════════════════════════════════════╝
 ```
 
-</details>
+```text
+ ┌──────────┐    ┌────────────┐    ┌─────────────┐    ┌─────────────────┐    ┌──────────────┐
+ │  MASTER  │───>│ FUND POOL  │───>│ INITIAL BUY │───>│  BUY  <->  SELL │───>│  SELL ALL    │
+ │  wallet  │    │ N wallets  │    │ 30-50% bal  │    │ rotate · delay  │    │  DRAIN  ->   │
+ └──────────┘    └────────────┘    └─────────────┘    └───┬─────────▲───┘    │  MASTER      │
+                                                          │         │        └──────────────┘
+      PHASE 0         PHASE 1           PHASE 2           └─────────┘           CLEANUP
+                                                        until duration ends
+```
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+| phase | action | details |
+|:---:|---|---|
+| `0` | master holds the budget | balance checked before start |
+| `1` | **fund** pool wallets | equal split, 500 ms between transfers |
+| `2` | **initial buy** | 30–50% of each wallet's SOL, timing per strategy |
+| `3` | **cycling** | rotating buy/sell until duration ends |
+| `·` | **cleanup** | `sellAll` → `drainWallets` → master |
 
-## 🎯 Strategies
+```text
+  loop until now >= endTime  or  job.stopping
+  │
+  ├─ pool  = wallets − previous
+  ├─ pool  = sort by lastUsedAt  (oldest first)
+  ├─ pick  = random(pool[0..2])
+  ├─ isBuy = !pick.hasTokens  ||  random() < buyBias
+  │
+  ├─ BUY  ─> 30% of (balance − fee reserve)
+  ├─ SELL ─> 40–70% of token balance
+  │
+  ├─ error ─> consecutiveErrors++  ─>  5 ? STOP
+  └─ sleep(strategy.cycleDelay())
+```
 
-<p align="center">
-  <img src="assets/strategies.svg" alt="Strategies" width="100%">
-</p>
+---
+
+<a id="03--strategies"></a>
+
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [03]  STRATEGIES                                                          ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
+
+```text
+  BASIC ............ initial: all at once ............ cycle delay: 1-3s
+  t=0 ─┬──────────────────────────────────────────────────────────────>
+       o   B S B B S B  S B B S B B S  B S B B S B B S B  S B B S B
+       o
+       o
+       o
+       o
+
+  STAGGERED ........ initial: 2-6s apart ............ cycle delay: 2-8s
+  t=0 ─┬───┬───┬───┬───┬───┬──────────────────────────────────────────>
+       o   o   o   o   o   o     B     S      B    B       S     B   S
+
+  legend:  o initial buy    B buy    S sell
+```
 
 | | `basic` | `staggered` |
 |---|:---:|:---:|
-| Budget distribution | equal | equal |
-| Initial buy | all wallets at once | 2–6 s between wallets |
-| Delay between trades | 1–3 s | 2–8 s |
-| Trade density | high | medium |
-| Default | | ✔ |
+| distribution | equal | equal |
+| initial buy | all at once | 2–6 s apart |
+| trade delay | 1–3 s | 2–8 s |
+| density | high | medium |
+| default | | ✔ |
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+---
 
-## 🖥 CLI
+<a id="04--cli"></a>
 
-<table>
-<tr><th>Command</th><th>Purpose</th></tr>
-<tr><td><code>node cli/nuke.mjs --mint &lt;CA&gt;</code></td><td>Preview → confirm → start a volume job</td></tr>
-<tr><td><code>node cli/status.mjs [jobId]</code></td><td>List all jobs, or details + last 10 trades</td></tr>
-<tr><td><code>node cli/panic.mjs &lt;jobId&gt;</code></td><td>Sell every token from every wallet, then drain</td></tr>
-<tr><td><code>node cli/drain.mjs &lt;jobId&gt;</code></td><td>Return SOL to master without selling</td></tr>
-</table>
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [04]  CLI                                                                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
 
-### `nuke.mjs` flags
+```text
+┌─────────────────────────────────────┬────────────────────────────────────────┐
+│ node cli/nuke.mjs --mint <CA>       │ preview -> confirm -> start            │
+│ node cli/status.mjs [jobId]         │ all jobs / details + last 10 trades    │
+│ node cli/panic.mjs <jobId>          │ sell every token, then drain           │
+│ node cli/drain.mjs <jobId>          │ SOL back to master, no selling         │
+└─────────────────────────────────────┴────────────────────────────────────────┘
+```
 
-| Flag | Description | Default |
+| flag | description | default |
 |---|---|:---:|
-| `-m, --mint` | Token contract address | **required** |
-| `-b, --budget` | Total SOL budget | `0.5` |
-| `-w, --wallets` | Wallets in the pool | `8` |
+| `-m, --mint` | token contract address | **required** |
+| `-b, --budget` | total SOL budget | `0.5` |
+| `-w, --wallets` | wallets in the pool | `8` |
 | `-s, --strategy` | `basic` \| `staggered` | `staggered` |
-| `-d, --duration` | Run length, minutes | `15` |
-| `--bias` | Buy probability `0–1` | `0.6` |
-| `--slippage` | Slippage, bps | `1000` |
-| `-y, --yes` | Skip confirmation prompt | `false` |
-| `-h, --help` | Show help | |
-
-### npm scripts
+| `-d, --duration` | run length, minutes | `15` |
+| `--bias` | buy probability `0–1` | `0.6` |
+| `--slippage` | slippage, bps | `1000` |
+| `-y, --yes` | skip confirmation | `false` |
 
 ```bash
 npm run nuke -- --mint <CA> --budget 0.3
@@ -192,26 +217,45 @@ npm run drain -- <jobId>
 npm run dashboard
 ```
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+---
 
-## 📊 Dashboard
+<a id="05--dashboard"></a>
 
-<p align="center">
-  <img src="assets/dashboard.svg" alt="Dashboard" width="100%">
-</p>
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [05]  DASHBOARD                                                           ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
 
-Vanilla JS, dark theme, monospace, refreshes every 3 seconds. Start jobs from a form, watch buys/sells and the trade log live, stop or panic-sell with one click.
+```text
+┌─ PUMPNUKE ────────────────────────────────────────────────────────── LIVE ─┐
+│   BUYS 114     SELLS 85     CYCLES 195     VOLUME 3.32 SOL                 │
+├─────────────────────────────────────────────┬──────────────────────────────┤
+│ BUY / SELL FLOW                             │ WALLET POOL                  │
+│                                             │ Cx9M..AVbP ████████░░ 0.066  │
+│ buy   ▃▅▂▇▄▆█▃▅▄█▆▃▇▄█▃▆▅▇▂▆█▄▇▅█▆▄▇        │ C2K4..DkrT ██████░░░░ 0.051  │
+│ sell  ▁▂▃▁▂▂▃▂▁▂▄▂▃▂▂▄▁▃▂▃▁▂▄▂▃▁▄▂▁▃        │ AorA..W8Ar █████████░ 0.073  │
+│                                             │ Ae8m..exZV █████░░░░░ 0.038  │
+│                                             │ 3UdP..DKUH ███████░░░ 0.058  │
+│                                             │ HtUc..vUMK ██████░░░░ 0.046  │
+├─────────────────────────────────────────────┴──────────────────────────────┤
+│ TRADE LOG                                                                  │
+│   10:48:15  SELL  HtUc..vUMK  58%          sig=4xQ9..mT2a                  │
+│   10:48:15  BUY   3UdP..DKUH  0.0470 SOL   sig=2bLk..9vPe                  │
+│   10:48:14  SELL  HtUc..vUMK  63%          sig=5nRw..Zc1d                  │
+│   10:48:14  BUY   Ccif..ZkgK  0.0260 SOL   sig=3hTy..Qa8k                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│   [ START ]   [ STOP ]   [ PANIC ]                 auto-refresh 3s         │
+└────────────────────────────────────────────────────────────────────────────┘
+```
 
-<details>
-<summary><b>REST API</b></summary>
-
-| Method | Endpoint | Description |
+| method | endpoint | description |
 |:---:|---|---|
-| `GET` | `/api/jobs` | All jobs + current mode |
-| `GET` | `/api/jobs/:id` | Job details, wallets (public keys only), last 50 trades |
-| `POST` | `/api/jobs` | Create and start a job |
-| `POST` | `/api/jobs/:id/stop` | Graceful stop |
-| `POST` | `/api/jobs/:id/panic` | Panic sell + drain |
+| `GET` | `/api/jobs` | all jobs |
+| `GET` | `/api/jobs/:id` | details, public keys, last 50 trades |
+| `POST` | `/api/jobs` | create + start a job |
+| `POST` | `/api/jobs/:id/stop` | graceful stop |
+| `POST` | `/api/jobs/:id/panic` | panic sell + drain |
 
 ```bash
 curl -X POST http://localhost:3002/api/jobs \
@@ -219,126 +263,141 @@ curl -X POST http://localhost:3002/api/jobs \
   -d '{"mint":"<CA>","budget":0.3,"numWallets":6,"strategy":"basic","durationMin":10}'
 ```
 
-</details>
+---
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+<a id="06--configuration"></a>
 
-## ⚙ Configuration
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [06]  CONFIGURATION                                                       ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
 
-| Variable | Description | Default |
+| variable | description | default |
 |---|---|:---:|
 | `RPC_URL` | Solana RPC endpoint | public mainnet |
-| `WALLET_PRIVATE_KEY` | Master wallet, base58 | — |
-| `DRY_RUN` | Paper mode | `true` |
+| `WALLET_PRIVATE_KEY` | master wallet, base58 | — |
+| `DRY_RUN` | set to `false` | `false` |
 | `DEFAULT_STRATEGY` | `basic` / `staggered` | `staggered` |
-| `DEFAULT_WALLETS` | Pool size | `8` |
-| `DEFAULT_BUDGET` | Budget, SOL | `0.5` |
-| `DEFAULT_DURATION_MIN` | Run length, minutes | `15` |
-| `DEFAULT_BUY_BIAS` | Buy probability | `0.6` |
-| `DEFAULT_SLIPPAGE_BPS` | Slippage, bps | `1000` |
-| `PRIORITY_FEE` | Compute unit price, µLamports | `300000` |
+| `DEFAULT_WALLETS` | pool size | `8` |
+| `DEFAULT_BUDGET` | budget, SOL | `0.5` |
+| `DEFAULT_DURATION_MIN` | run length, minutes | `15` |
+| `DEFAULT_BUY_BIAS` | buy probability | `0.6` |
+| `DEFAULT_SLIPPAGE_BPS` | slippage, bps | `1000` |
+| `PRIORITY_FEE` | compute unit price, µLamports | `300000` |
 | `JITO_TIP` | Jito tip, SOL | `0.0001` |
-| `DASHBOARD_PORT` | Dashboard port | `3002` |
+| `DASHBOARD_PORT` | dashboard port | `3002` |
 | `SOL_RESERVE` | SOL kept per wallet for fees | `0.01` |
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+---
 
-## 🔬 Under the Hood
+<a id="07--under-the-hood"></a>
+
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [07]  UNDER THE HOOD                                                      ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
 
 ```text
 pumpnuke/
 ├── lib/
-│   ├── config.mjs          env loading, connection, master keypair
-│   ├── constants.mjs       compute limits, Jito endpoint + tip accounts
-│   ├── logger.mjs          ANSI colors: buy green · sell red · fund yellow · drain blue
-│   ├── wallet-pool.mjs     generateWallets · fundWallets · drainWallets · sellAll
-│   ├── trade-builder.mjs   buildBuy / buildSell via @pump-fun/pump-sdk + pump-swap-sdk
-│   ├── volume-engine.mjs   runVolume — the three-phase loop, paper + live
-│   ├── job-manager.mjs     prepare → confirm → running → stop, persistence, SIGINT
-│   └── jito.mjs            single-endpoint bundle submit + status polling
-├── cli/                    nuke · status · panic · drain
-├── dashboard/              server.mjs + public/index.html
-└── assets/                 README artwork
+│   ├── config.mjs ............ env, RPC connection, master keypair
+│   ├── constants.mjs ......... compute limits, Jito endpoint, tip accounts
+│   ├── logger.mjs ............ ANSI: buy green · sell red · fund yellow · drain blue
+│   ├── wallet-pool.mjs ....... generateWallets · fundWallets · drainWallets · sellAll
+│   ├── trade-builder.mjs ..... buildBuy / buildSell — pump-sdk + pump-swap-sdk
+│   ├── volume-engine.mjs ..... runVolume — fund → initial buy → cycling → cleanup
+│   ├── job-manager.mjs ....... prepare → confirm → run → stop · persistence · SIGINT
+│   └── jito.mjs .............. bundle submit + status polling
+├── cli/
+│   ├── nuke.mjs .............. start a job
+│   ├── status.mjs ............ list / inspect jobs
+│   ├── panic.mjs ............. sell everything + drain
+│   └── drain.mjs ............. SOL back to master
+└── dashboard/
+    ├── server.mjs ............ HTTP API on :3002
+    └── public/index.html ..... live UI
 ```
-
-<details>
-<summary><b>Transactions</b></summary>
-
-- `VersionedTransaction` v0 messages
-- `ComputeUnitLimit` 250 000, `ComputeUnitPrice` from `PRIORITY_FEE`
-- Simple `getLatestBlockhash` + `sendTransaction` with `maxRetries: 3`
-- Token program auto-detected from the mint owner (SPL / Token-2022)
-- Venue auto-detected: bonding curve → `buyV2Instructions` / `sellV2Instructions`, graduated → PumpSwap `buyQuoteInput` / `sellBaseInput`
-
-</details>
-
-<details>
-<summary><b>Job lifecycle</b></summary>
 
 ```text
-prepared ──confirm──▶ funding ──▶ buying ──▶ running ──▶ cleanup ──▶ completed
-                         │           │          │
-                         └───────────┴──stop────┴──────▶ stopped
-                                                 panic ─▶ panic-stopped
-                                         any fatal error ─▶ failed (auto drain)
+  prepared ──confirm──> funding ──> buying ──> running ──> cleanup ──> completed
+                           │          │          │
+                           └──────────┴───stop───┴─────────────────> stopped
+                                              panic ───────────────> panic-stopped
+                                    fatal error ── auto drain ─────> failed
 ```
 
-Only one active job at a time. Jobs are saved every 10 s and on every status change.
+```text
+  TX      VersionedTransaction v0 · CU limit 250 000 · CU price = PRIORITY_FEE
+  VENUE   bonding curve -> buyV2 / sellV2   ·   graduated -> PumpSwap
+  TOKEN   SPL / Token-2022 auto-detected from mint owner
+  MATH    BigInt everywhere · SOL in lamports
+  STATE   one active job · saved every 10 s to data/jobs/<id>.json
+  SAFETY  5 consecutive errors -> stop · Ctrl+C -> sell all -> drain -> stats
+```
 
+---
+
+<a id="08--faq"></a>
+
+```text
+╔════════════════════════════════════════════════════════════════════════════╗
+║  [08]  FAQ                                                                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
+
+<details>
+<summary><b>> Ctrl+C mid-run?</b></summary>
+
+All active jobs stop, remaining tokens are sold, SOL is drained to master and session stats are printed. Press twice to force-quit.
 </details>
 
 <details>
-<summary><b>Paper mode</b></summary>
+<summary><b>> Job stopped by itself?</b></summary>
 
-With `DRY_RUN=true` the engine never touches the network for trades. It simulates per-wallet SOL and token balances, runs the same rotation and buy/sell decisions, writes the same trade records (flagged `simulated: true`) and shortens delays so a 1-minute run produces ~200 cycles.
-
-</details>
-
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
-
-## ❓ FAQ
-
-<details>
-<summary><b>What happens if I press Ctrl+C mid-run?</b></summary>
-
-All active jobs get `stopping = true`, the loop exits, remaining tokens are sold, SOL is drained to master and session stats are printed. Press `Ctrl+C` twice to force-quit.
+Five failed trades in a row trigger auto-stop — dead token, drained curve or RPC issues. Check `node cli/status.mjs <jobId>`.
 </details>
 
 <details>
-<summary><b>The job stopped by itself.</b></summary>
+<summary><b>> Where are the wallet keys?</b></summary>
 
-Five failed trades in a row trigger auto-stop — usually a dead token, a drained curve or an RPC problem. Check `node cli/status.mjs <jobId>` for the last errors.
+`data/jobs/<id>.json`, plaintext, git-ignored. `node cli/drain.mjs <id>` recovers SOL from any job.
 </details>
 
 <details>
-<summary><b>Where are the wallet keys?</b></summary>
+<summary><b>> Token graduated mid-run?</b></summary>
 
-In `data/jobs/<id>.json`, plaintext. The folder is git-ignored. Run `node cli/drain.mjs <id>` to recover SOL from any job at any time.
+The trade builder checks the curve on every trade and switches to PumpSwap automatically.
 </details>
 
-<details>
-<summary><b>Does it work after the token graduates?</b></summary>
+---
 
-Yes. The trade builder checks the bonding curve state on every trade and switches to PumpSwap automatically.
-</details>
+```text
+┌──────────────────────────────────────┬──────────────────────────────────────┐
+│ [+] CAN                              │ [-] CANNOT                           │
+├──────────────────────────────────────┼──────────────────────────────────────┤
+│ buy/sell cycles across 2-20 wallets  │ guarantee profit                     │
+│ trade on curve and PumpSwap          │ launch new tokens                    │
+│ panic sell + drain in one command    │ tune priority fee dynamically        │
+│ recover SOL from any saved job       │ encrypt stored wallet keys           │
+│ monitor everything from a dashboard  │ recover keys if data/ is deleted     │
+└──────────────────────────────────────┴──────────────────────────────────────┘
+```
 
-<p align="center"><img src="assets/divider.svg" width="100%"></p>
+```text
+[!] DISCLAIMER
+    Crypto trading carries a high risk of loss. Artificial volume misleads other
+    market participants and may be illegal in your jurisdiction or against
+    platform terms. You are solely responsible for how you use this software.
+```
 
-## ✅ Can / ❌ Cannot
+<div align="center">
 
-| ✅ Can | ❌ Cannot |
-|---|---|
-| Run buy/sell cycles across 2–20 wallets | Guarantee profit — fees and slippage cost SOL |
-| Simulate everything in paper mode | Launch new tokens |
-| Panic-sell and drain in one command | Adjust priority fees dynamically |
-| Trade on curve and PumpSwap | Encrypt stored wallet keys |
-| Monitor runs from a web dashboard | Recover keys if `data/` is deleted |
+```text
+·  ·  ·  ~=~=~=<[ PUMP | NUKE ]>  ·  ·  ·
+```
 
-## ⚠ Disclaimer
+<sub>built by <a href="https://github.com/zostaff">zostaff</a></sub>
 
-For educational and research purposes only. Trading crypto carries a high risk of loss. Artificial volume can mislead other market participants and may be illegal in your jurisdiction or against platform terms. You are solely responsible for how you use this software.
-
-<p align="center">
-  <img src="assets/divider.svg" width="100%">
-  <br><sub>MIT · built by <a href="https://github.com/zostaff">zostaff</a></sub>
-</p>
+</div>
