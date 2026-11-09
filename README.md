@@ -1,89 +1,35 @@
-<div align="center">
+<p align="center"><img src="assets/hero.svg" width="100%" alt="hero"></p>
 
-```text
-                         |\
-                         | \
-              .  ~=~=~=~ |  \______________________________________________
-           .  ~=~=~=~=~=~|==/:::::::::::::::::::::|                        \
-         ~=~=~=~=~=~=~=~=|=|::::::::::::::::::::::|          \ | /          |
-       <~=~=~=~=~=~=~=~=~|=|:::::  P U M P  ::::::|        --( O )--        |
-         ~=~=~=~=~=~=~=~=|=|::::::::::::::::::::::|          / | \          |
-           '  ~=~=~=~=~=~|==\:::::::::::::::::::::|                        /
-              '  ~=~=~=~ |  /----------------------------------------------
-                         | /
-                         |/
-```
+<p align="center">
+  <img src="https://img.shields.io/badge/node-22%2B-ff8a1f?style=for-the-badge&labelColor=160805" alt="node">
+  <img src="https://img.shields.io/badge/solana-web3.js-ff5a1a?style=for-the-badge&labelColor=160805" alt="solana">
+  <img src="https://img.shields.io/badge/pump.fun-sdk-ffd400?style=for-the-badge&labelColor=160805" alt="pump.fun">
+  <img src="https://img.shields.io/badge/ESM-only-ff2a2a?style=for-the-badge&labelColor=160805" alt="esm">
+</p>
 
-```text
-██████╗ ██╗   ██╗███╗   ███╗██████╗ ███╗   ██╗██╗   ██╗██╗  ██╗███████╗
-██╔══██╗██║   ██║████╗ ████║██╔══██╗████╗  ██║██║   ██║██║ ██╔╝██╔════╝
-██████╔╝██║   ██║██╔████╔██║██████╔╝██╔██╗ ██║██║   ██║█████╔╝ █████╗
-██╔═══╝ ██║   ██║██║╚██╔╝██║██╔═══╝ ██║╚██╗██║██║   ██║██╔═██╗ ██╔══╝
-██║     ╚██████╔╝██║ ╚═╝ ██║██║     ██║ ╚████║╚██████╔╝██║  ██╗███████╗
-╚═╝      ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
-```
+<p align="center">
+  <b><a href="#01--quick-start">[ quick start ]</a></b> ·
+  <b><a href="#02--how-it-works">[ flow ]</a></b> ·
+  <b><a href="#03--strategies">[ strategies ]</a></b> ·
+  <b><a href="#04--cli">[ cli ]</a></b> ·
+  <b><a href="#05--dashboard">[ dashboard ]</a></b> ·
+  <b><a href="#06--configuration">[ config ]</a></b> ·
+  <b><a href="#07--under-the-hood">[ internals ]</a></b> ·
+  <b><a href="#08--faq">[ faq ]</a></b>
+</p>
 
-```text
-┌────────────────────────────────────────────────────────────────────────────────┐
-│   >> VOLUME ENGINE FOR PUMP.FUN  //  WALLET POOL  //  CLI + LIVE DASHBOARD <<  │
-└────────────────────────────────────────────────────────────────────────────────┘
-```
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-![node](https://img.shields.io/badge/node-22%2B-3ddc84?style=flat-square&labelColor=0a0e12)
-![solana](https://img.shields.io/badge/solana-web3.js-9945FF?style=flat-square&labelColor=0a0e12)
-![pump.fun](https://img.shields.io/badge/pump.fun-sdk-3ddc84?style=flat-square&labelColor=0a0e12)
-![esm](https://img.shields.io/badge/ESM-only-ffb020?style=flat-square&labelColor=0a0e12)
-
-**[ quick start ](#01--quick-start)** · **[ flow ](#02--how-it-works)** · **[ strategies ](#03--strategies)** · **[ cli ](#04--cli)** · **[ dashboard ](#05--dashboard)** · **[ config ](#06--configuration)** · **[ internals ](#07--under-the-hood)** · **[ faq ](#08--faq)**
-
-</div>
-
-```text
-┌────────────────────────────────────┬────────────────────────────────────┐
-│ [x2] STRATEGIES                    │ [@@] WALLET POOL                   │
-│      basic · staggered timing      │      generate · fund · drain       │
-├────────────────────────────────────┼────────────────────────────────────┤
-│ [<>] LRU ROTATION                  │ [%%] PARTIAL SELLS                 │
-│      never same wallet twice       │      40-70% of holdings            │
-├────────────────────────────────────┼────────────────────────────────────┤
-│ [!!] PANIC SELL                    │ [##] LIVE DASHBOARD                │
-│      dump all + drain, 1 cmd       │      dark UI, refresh 3s           │
-├────────────────────────────────────┼────────────────────────────────────┤
-│ [~~] CURVE + PUMPSWAP              │ [XX] AUTO STOP                     │
-│      venue auto-detect             │      5 errors in a row = halt      │
-└────────────────────────────────────┴────────────────────────────────────┘
-```
+<p align="center"><img src="assets/features.svg" width="100%" alt="features"></p>
 
 PUMPNUKE spins up a pool of fresh Solana wallets, funds them from your master wallet and runs continuous buy/sell cycles on a pump.fun token — rotating wallets, randomized sizes, strategy-driven timing. When the run ends or you hit `Ctrl+C`, it sells every remaining token and drains all SOL back to master.
 
-```text
-$ node cli/nuke.mjs --mint DYdf...pump --budget 0.5 --wallets 8 --strategy staggered
+<p align="center"><img src="assets/terminal.svg" width="100%" alt="terminal"></p>
 
-  P U M P N U K E  ·  LIVE  ·  8 wallets  ·  0.5 SOL  ·  15 min
-  Proceed? (y/n) y
-
-10:47:40.489 [JOB]   job ecc2434de1a8 started — Ctrl+C to stop gracefully
-10:47:40.592 [FUND]  C2K4..DkrT 0.0719 SOL  sig=3kPq9wZx..
-10:47:41.104 [FUND]  AorA..W8Ar 0.0719 SOL  sig=5mTr2vLb..
-10:47:44.407 [BUY]   Ae8m..exZV 0.0270 SOL (initial)
-10:47:48.118 [SELL]  C2K4..DkrT 41% tokens
-10:47:51.723 [BUY]   Cx9M..AVbP 0.0134 SOL
-10:47:55.025 [SELL]  AorA..W8Ar 63% tokens
-10:47:58.327 [BUY]   C2K4..DkrT 0.0118 SOL
-   ...
-11:02:41.796 [DRAIN] Cx9M..AVbP 0.0581 SOL  sig=2zHn7cQe..
-11:02:42.901 [JOB]   done — 214 buys, 141 sells, 0.9861 SOL spent
-```
-
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="01--quick-start"></a>
-
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [01]  QUICK START                                                         ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
+<p align="center"><img src="assets/section-01.svg" width="100%" alt="section-01"></p>
 
 ```bash
 git clone https://github.com/zostaff/PUMPNUKE.git && cd PUMPNUKE
@@ -102,25 +48,12 @@ node cli/nuke.mjs --mint <TOKEN_CA> --budget 0.5 --wallets 8 --strategy staggere
 node dashboard/server.mjs        # -> http://localhost:3002
 ```
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="02--how-it-works"></a>
+<p align="center"><img src="assets/section-02.svg" width="100%" alt="section-02"></p>
 
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [02]  HOW IT WORKS                                                        ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
-
-```text
- ┌──────────┐    ┌────────────┐    ┌─────────────┐    ┌─────────────────┐    ┌──────────────┐
- │  MASTER  │───>│ FUND POOL  │───>│ INITIAL BUY │───>│  BUY  <->  SELL │───>│  SELL ALL    │
- │  wallet  │    │ N wallets  │    │ 30-50% bal  │    │ rotate · delay  │    │  DRAIN  ->   │
- └──────────┘    └────────────┘    └─────────────┘    └───┬─────────▲───┘    │  MASTER      │
-                                                          │         │        └──────────────┘
-      PHASE 0         PHASE 1           PHASE 2           └─────────┘           CLEANUP
-                                                        until duration ends
-```
+<p align="center"><img src="assets/flow.svg" width="100%" alt="flow"></p>
 
 | phase | action | details |
 |:---:|---|---|
@@ -130,46 +63,14 @@ node dashboard/server.mjs        # -> http://localhost:3002
 | `3` | **cycling** | rotating buy/sell until duration ends |
 | `·` | **cleanup** | `sellAll` → `drainWallets` → master |
 
-```text
-  loop until now >= endTime  or  job.stopping
-  │
-  ├─ pool  = wallets − previous
-  ├─ pool  = sort by lastUsedAt  (oldest first)
-  ├─ pick  = random(pool[0..2])
-  ├─ isBuy = !pick.hasTokens  ||  random() < buyBias
-  │
-  ├─ BUY  ─> 30% of (balance − fee reserve)
-  ├─ SELL ─> 40–70% of token balance
-  │
-  ├─ error ─> consecutiveErrors++  ─>  5 ? STOP
-  └─ sleep(strategy.cycleDelay())
-```
+<p align="center"><img src="assets/loop.svg" width="100%" alt="loop"></p>
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="03--strategies"></a>
+<p align="center"><img src="assets/section-03.svg" width="100%" alt="section-03"></p>
 
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [03]  STRATEGIES                                                          ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
-
-```text
-  BASIC ............ initial: all at once ............ cycle delay: 1-3s
-  t=0 ─┬──────────────────────────────────────────────────────────────>
-       o   B S B B S B  S B B S B B S  B S B B S B B S B  S B B S B
-       o
-       o
-       o
-       o
-
-  STAGGERED ........ initial: 2-6s apart ............ cycle delay: 2-8s
-  t=0 ─┬───┬───┬───┬───┬───┬──────────────────────────────────────────>
-       o   o   o   o   o   o     B     S      B    B       S     B   S
-
-  legend:  o initial buy    B buy    S sell
-```
+<p align="center"><img src="assets/strategies.svg" width="100%" alt="strategies"></p>
 
 | | `basic` | `staggered` |
 |---|:---:|:---:|
@@ -179,24 +80,12 @@ node dashboard/server.mjs        # -> http://localhost:3002
 | density | high | medium |
 | default | | ✔ |
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="04--cli"></a>
+<p align="center"><img src="assets/section-04.svg" width="100%" alt="section-04"></p>
 
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [04]  CLI                                                                 ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
-
-```text
-┌─────────────────────────────────────┬────────────────────────────────────────┐
-│ node cli/nuke.mjs --mint <CA>       │ preview -> confirm -> start            │
-│ node cli/status.mjs [jobId]         │ all jobs / details + last 10 trades    │
-│ node cli/panic.mjs <jobId>          │ sell every token, then drain           │
-│ node cli/drain.mjs <jobId>          │ SOL back to master, no selling         │
-└─────────────────────────────────────┴────────────────────────────────────────┘
-```
+<p align="center"><img src="assets/cli.svg" width="100%" alt="cli"></p>
 
 | flag | description | default |
 |---|---|:---:|
@@ -217,37 +106,12 @@ npm run drain -- <jobId>
 npm run dashboard
 ```
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="05--dashboard"></a>
+<p align="center"><img src="assets/section-05.svg" width="100%" alt="section-05"></p>
 
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [05]  DASHBOARD                                                           ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
-
-```text
-┌─ PUMPNUKE ────────────────────────────────────────────────────────── LIVE ─┐
-│   BUYS 114     SELLS 85     CYCLES 195     VOLUME 3.32 SOL                 │
-├─────────────────────────────────────────────┬──────────────────────────────┤
-│ BUY / SELL FLOW                             │ WALLET POOL                  │
-│                                             │ Cx9M..AVbP ████████░░ 0.066  │
-│ buy   ▃▅▂▇▄▆█▃▅▄█▆▃▇▄█▃▆▅▇▂▆█▄▇▅█▆▄▇        │ C2K4..DkrT ██████░░░░ 0.051  │
-│ sell  ▁▂▃▁▂▂▃▂▁▂▄▂▃▂▂▄▁▃▂▃▁▂▄▂▃▁▄▂▁▃        │ AorA..W8Ar █████████░ 0.073  │
-│                                             │ Ae8m..exZV █████░░░░░ 0.038  │
-│                                             │ 3UdP..DKUH ███████░░░ 0.058  │
-│                                             │ HtUc..vUMK ██████░░░░ 0.046  │
-├─────────────────────────────────────────────┴──────────────────────────────┤
-│ TRADE LOG                                                                  │
-│   10:48:15  SELL  HtUc..vUMK  58%          sig=4xQ9..mT2a                  │
-│   10:48:15  BUY   3UdP..DKUH  0.0470 SOL   sig=2bLk..9vPe                  │
-│   10:48:14  SELL  HtUc..vUMK  63%          sig=5nRw..Zc1d                  │
-│   10:48:14  BUY   Ccif..ZkgK  0.0260 SOL   sig=3hTy..Qa8k                  │
-├────────────────────────────────────────────────────────────────────────────┤
-│   [ START ]   [ STOP ]   [ PANIC ]                 auto-refresh 3s         │
-└────────────────────────────────────────────────────────────────────────────┘
-```
+<p align="center"><img src="assets/dashboard.svg" width="100%" alt="dashboard"></p>
 
 | method | endpoint | description |
 |:---:|---|---|
@@ -263,15 +127,10 @@ curl -X POST http://localhost:3002/api/jobs \
   -d '{"mint":"<CA>","budget":0.3,"numWallets":6,"strategy":"basic","durationMin":10}'
 ```
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="06--configuration"></a>
-
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [06]  CONFIGURATION                                                       ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
+<p align="center"><img src="assets/section-06.svg" width="100%" alt="section-06"></p>
 
 | variable | description | default |
 |---|---|:---:|
@@ -289,63 +148,21 @@ curl -X POST http://localhost:3002/api/jobs \
 | `DASHBOARD_PORT` | dashboard port | `3002` |
 | `SOL_RESERVE` | SOL kept per wallet for fees | `0.01` |
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="07--under-the-hood"></a>
+<p align="center"><img src="assets/section-07.svg" width="100%" alt="section-07"></p>
 
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [07]  UNDER THE HOOD                                                      ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
+<p align="center"><img src="assets/tree.svg" width="100%" alt="tree"></p>
 
-```text
-pumpnuke/
-├── lib/
-│   ├── config.mjs ............ env, RPC connection, master keypair
-│   ├── constants.mjs ......... compute limits, Jito endpoint, tip accounts
-│   ├── logger.mjs ............ ANSI: buy green · sell red · fund yellow · drain blue
-│   ├── wallet-pool.mjs ....... generateWallets · fundWallets · drainWallets · sellAll
-│   ├── trade-builder.mjs ..... buildBuy / buildSell — pump-sdk + pump-swap-sdk
-│   ├── volume-engine.mjs ..... runVolume — fund → initial buy → cycling → cleanup
-│   ├── job-manager.mjs ....... prepare → confirm → run → stop · persistence · SIGINT
-│   └── jito.mjs .............. bundle submit + status polling
-├── cli/
-│   ├── nuke.mjs .............. start a job
-│   ├── status.mjs ............ list / inspect jobs
-│   ├── panic.mjs ............. sell everything + drain
-│   └── drain.mjs ............. SOL back to master
-└── dashboard/
-    ├── server.mjs ............ HTTP API on :3002
-    └── public/index.html ..... live UI
-```
+<p align="center"><img src="assets/lifecycle.svg" width="100%" alt="lifecycle"></p>
 
-```text
-  prepared ──confirm──> funding ──> buying ──> running ──> cleanup ──> completed
-                           │          │          │
-                           └──────────┴───stop───┴─────────────────> stopped
-                                              panic ───────────────> panic-stopped
-                                    fatal error ── auto drain ─────> failed
-```
+<p align="center"><img src="assets/specs.svg" width="100%" alt="specs"></p>
 
-```text
-  TX      VersionedTransaction v0 · CU limit 250 000 · CU price = PRIORITY_FEE
-  VENUE   bonding curve -> buyV2 / sellV2   ·   graduated -> PumpSwap
-  TOKEN   SPL / Token-2022 auto-detected from mint owner
-  MATH    BigInt everywhere · SOL in lamports
-  STATE   one active job · saved every 10 s to data/jobs/<id>.json
-  SAFETY  5 consecutive errors -> stop · Ctrl+C -> sell all -> drain -> stats
-```
-
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
 <a id="08--faq"></a>
-
-```text
-╔════════════════════════════════════════════════════════════════════════════╗
-║  [08]  FAQ                                                                 ║
-╚════════════════════════════════════════════════════════════════════════════╝
-```
+<p align="center"><img src="assets/section-08.svg" width="100%" alt="section-08"></p>
 
 <details>
 <summary><b>> Ctrl+C mid-run?</b></summary>
@@ -371,33 +188,12 @@ Five failed trades in a row trigger auto-stop — dead token, drained curve or R
 The trade builder checks the curve on every trade and switches to PumpSwap automatically.
 </details>
 
----
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-```text
-┌──────────────────────────────────────┬──────────────────────────────────────┐
-│ [+] CAN                              │ [-] CANNOT                           │
-├──────────────────────────────────────┼──────────────────────────────────────┤
-│ buy/sell cycles across 2-20 wallets  │ guarantee profit                     │
-│ trade on curve and PumpSwap          │ launch new tokens                    │
-│ panic sell + drain in one command    │ tune priority fee dynamically        │
-│ recover SOL from any saved job       │ encrypt stored wallet keys           │
-│ monitor everything from a dashboard  │ recover keys if data/ is deleted     │
-└──────────────────────────────────────┴──────────────────────────────────────┘
-```
+<p align="center"><img src="assets/can-cannot.svg" width="100%" alt="can-cannot"></p>
 
-```text
-[!] DISCLAIMER
-    Crypto trading carries a high risk of loss. Artificial volume misleads other
-    market participants and may be illegal in your jurisdiction or against
-    platform terms. You are solely responsible for how you use this software.
-```
+<p align="center"><img src="assets/disclaimer.svg" width="100%" alt="disclaimer"></p>
 
-<div align="center">
+<p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-```text
-·  ·  ·  ~=~=~=<[ PUMP | NUKE ]>  ·  ·  ·
-```
-
-<sub>built by <a href="https://github.com/zostaff">zostaff</a></sub>
-
-</div>
+<p align="center"><sub>built by <a href="https://github.com/zostaff">zostaff</a></sub></p>
